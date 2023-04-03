@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,17 +11,34 @@ public class Controls : MonoBehaviour
     
     [Tooltip("0 = Hair,\n 1 = Nose,\n 2 = L_Eyes,\n 3 = R_Eye,\n 4 = Mouth")]
     public SpriteRenderer[] facePart = new SpriteRenderer[5];
-
-    private int _tintIndex = 0;
-    private int _noseIndex = 0;
-    private int _hairColorIndex = 0;
-    private int _hairTypeIndex = 0;
     
+    
+    private readonly Dictionary<string, int> _subTabKeys = new Dictionary<string, int>
+    {   
+        {"faceIndex", 0},
+        {"bodyIndex", 0},
+        {"bottomIndex", 0}
+    };
+    
+    private readonly Dictionary<string, int> _faceBigTabKeys = new Dictionary<string, int>
+    {   
+        {"skinTintIndex", 0},
+        {"noseIndex", 0},
+        {"hairTypeIndex", 0},
+        {"hairColorIndex", 0},
+        {"eyeBrowTypeIndex", 0},
+        {"eyeBrowColorIndex", 0},
+        {"eyeTypeIndex", 0},
+        {"eyeColorIndex", 0},
+        {"mouthIndex", 0},
+    };
+
     private Vector2 _hairOrigin = Vector2.zero;
     private const int PixelPerUnit = 200;
     
     public SkinTintData[] skinTintData = new SkinTintData[8];
 
+    public GameObject faceSubTabButtonsParent; 
     public GameObject hairButtonsParent;
     public GameObject hairColorButtonParent;
     
@@ -57,6 +75,8 @@ public class Controls : MonoBehaviour
             skinTintData[i] = skinTintObject.transform.GetChild(i).GetComponent<SkinTintData>();
         }
     }
+    
+    
     
     private void SetUpHairTint()
     {
@@ -105,7 +125,7 @@ public class Controls : MonoBehaviour
     public void UpdateSkinTint(int index)
     {
         Debug.Log("Skin Tint Changed Index: " + index);
-        _tintIndex = index;
+        _faceBigTabKeys["skinTintIndex"] = index;
         ChangeSkinTintOnModel();
         ChangeSkinTintOnModel();
     }
@@ -113,18 +133,18 @@ public class Controls : MonoBehaviour
     private void ChangeSkinTintOnModel()
     {
         //Head Update 
-        bodyPart[0].sprite = skinTintData[_tintIndex].spriteTint[0];
+        bodyPart[0].sprite = skinTintData[_faceBigTabKeys["skinTintIndex"]].spriteTint[0];
         //Neck Update 
-        bodyPart[1].sprite = skinTintData[_tintIndex].spriteTint[1];
+        bodyPart[1].sprite = skinTintData[_faceBigTabKeys["skinTintIndex"]].spriteTint[1];
         //Arms 
-        bodyPart[2].sprite = skinTintData[_tintIndex].spriteTint[2];
-        bodyPart[4].sprite = skinTintData[_tintIndex].spriteTint[2];
+        bodyPart[2].sprite = skinTintData[_faceBigTabKeys["skinTintIndex"]].spriteTint[2];
+        bodyPart[4].sprite = skinTintData[_faceBigTabKeys["skinTintIndex"]].spriteTint[2];
         //Hands
-        bodyPart[3].sprite = skinTintData[_tintIndex].spriteTint[3];
-        bodyPart[5].sprite = skinTintData[_tintIndex].spriteTint[3];
+        bodyPart[3].sprite = skinTintData[_faceBigTabKeys["skinTintIndex"]].spriteTint[3];
+        bodyPart[5].sprite = skinTintData[_faceBigTabKeys["skinTintIndex"]].spriteTint[3];
         //Legs 
-        bodyPart[6].sprite = skinTintData[_tintIndex].spriteTint[4];
-        bodyPart[7].sprite = skinTintData[_tintIndex].spriteTint[4];
+        bodyPart[6].sprite = skinTintData[_faceBigTabKeys["skinTintIndex"]].spriteTint[4];
+        bodyPart[7].sprite = skinTintData[_faceBigTabKeys["skinTintIndex"]].spriteTint[4];
         
         ChangeNoseTint();
     }
@@ -132,7 +152,7 @@ public class Controls : MonoBehaviour
     private void ChangeNoseTint()
     {
         //Updates Nose 
-        facePart[1].sprite = skinTintData[_tintIndex].noseTints[_noseIndex];
+        facePart[1].sprite = skinTintData[_faceBigTabKeys["skinTintIndex"]].noseTints[_faceBigTabKeys["noseIndex"]];
     }
 
     private void ChangeSkinTintInMenu()
@@ -151,10 +171,10 @@ public class Controls : MonoBehaviour
     public void UpdateHairType(int i)
     {
         Debug.Log("Hair Type Changed Index: " + i);
-        _hairTypeIndex = i;
+        _faceBigTabKeys["hairTypeIndex"] = i;
         ChangeHairModel();
         ChangeHairCoordinates();
-        ChangeButtonActive(hairButtonsParent, _hairTypeIndex);
+        ChangeButtonActive(hairButtonsParent, _faceBigTabKeys["hairTypeIndex"] );
     }
 
     /// <summary>
@@ -162,19 +182,19 @@ public class Controls : MonoBehaviour
     /// </summary>
     private void ChangeHairCoordinates()
     {
-        switch (_hairTypeIndex)
+        switch (_faceBigTabKeys["hairTypeIndex"] )
         {
             //If Bold Don't Adjust 
             case 0:
                 return;
             //If Short Hair Adjust by adding 
             case < 9:
-                facePart[0].transform.position = _hairOrigin + hairCoordinates[_hairTypeIndex - 1];
+                facePart[0].transform.position = _hairOrigin + hairCoordinates[_faceBigTabKeys["hairTypeIndex"]  - 1];
                 break;
             //If Long hair adjust x by adding and y by subbing 
             default:
                 facePart[0].transform.position = new Vector3(_hairOrigin.x,
-                    _hairOrigin.y - hairCoordinates[_hairTypeIndex - 1].y, 0);
+                    _hairOrigin.y - hairCoordinates[_faceBigTabKeys["hairTypeIndex"]  - 1].y, 0);
                 break;
         }
     }
@@ -186,10 +206,10 @@ public class Controls : MonoBehaviour
     public void UpdateHairColor(int i)
     {
         Debug.Log("Hair Color Changed Index: " + i);
-        _hairColorIndex = i;
+        _faceBigTabKeys["hairColorIndex"]  = i;
         ChangeHairModel();
         ChangeHairColorMenu();
-        ChangeButtonActive(hairColorButtonParent, _hairColorIndex);
+        ChangeButtonActive(hairColorButtonParent, _faceBigTabKeys["hairColorIndex"]);
     }
 
     /// <summary>
@@ -202,7 +222,7 @@ public class Controls : MonoBehaviour
         //Updates all the other hair to the new color 
         for (var i = 1; i < hairIcons.Length; i++)
         {
-            hairIcons[i].sprite =  hairData[_hairColorIndex].hair[i - 1];
+            hairIcons[i].sprite =  hairData[_faceBigTabKeys["hairColorIndex"]].hair[i - 1];
         }
     }
     
@@ -212,12 +232,12 @@ public class Controls : MonoBehaviour
     private void ChangeHairModel()
     {
         //If bold turn hair off
-        if (_hairTypeIndex == 0) { facePart[0].enabled = false; }
+        if (_faceBigTabKeys["hairTypeIndex"] == 0) { facePart[0].enabled = false; }
         //Else turn hair on and change to the desired style 
         else
         {
             facePart[0].enabled = true;
-            facePart[0].sprite = hairData[_hairColorIndex].hair[_hairTypeIndex - 1];   
+            facePart[0].sprite = hairData[_faceBigTabKeys["hairColorIndex"]].hair[_faceBigTabKeys["hairTypeIndex"] - 1];   
         }
     }
 
