@@ -9,8 +9,8 @@ public class Controls : MonoBehaviour
              "7 = R_Leg")]
     public SpriteRenderer[] bodyPart = new SpriteRenderer[8];
     
-    [Tooltip("0 = Hair,\n 1 = Nose,\n 2 = L_Eyes,\n 3 = R_Eye,\n 4 = Mouth")]
-    public SpriteRenderer[] facePart = new SpriteRenderer[5];
+    [Tooltip("0 = Hair,\n 1 = Nose,\n 2 = L_Eyes,\n 3 = R_Eye,\n 4 = Mouth, \n 5 = L_EyeBrow,\n 6 = R_EyeBrow,")]
+    public SpriteRenderer[] facePart = new SpriteRenderer[7];
     
     
     private readonly Dictionary<string, int> _subTabKeys = new Dictionary<string, int>
@@ -39,30 +39,39 @@ public class Controls : MonoBehaviour
     public SkinTintData[] skinTintData = new SkinTintData[8];
 
     public GameObject faceSubTabButtonsParent; 
-    public GameObject hairButtonsParent;
-    public GameObject hairColorButtonParent;
+    public GameObject[] buttonsParents = new GameObject[]{};
+    public GameObject[] colorButtonParents = new GameObject[]{};
     
-    public HairData[] hairData = new HairData[8];
+    public SpriteData[] hairData = new SpriteData[8];
     public Vector2[] hairCoordinates = new Vector2[14];
     public Image[] hairIcons = new Image[15];
+    
+    public SpriteData[] eyeBrowData = new SpriteData[8]; 
+    public Image[] eyeBrowIcons = new Image[4];
 
     private ButtonSpawner _buttonSpawner;
+    private SpawnData _spawnData;
 
     // Start is called before the first frame update
     void Start()
     {
         _buttonSpawner = GetComponent<ButtonSpawner>();
+        _spawnData = GetComponent<SpawnData>();
+        
+        _spawnData.StartSpawnData();
         
         SetUpSkinTint();
         
         SetUpHairTint();
+        SetUpEyeBrowTint();
         SetUpHairCoordinates();
         
-        _buttonSpawner.SpawnHairButtons();
+        _buttonSpawner.SpawnButtons();
         
         SetUpButtons();
+        //_buttonSpawner.buttonParents[0].GetChild(0).GetComponent<Button>().onClick.Invoke();
     }
-    
+
     //==================================================================================================================
     // Set Up Data & UI Methods 
     //==================================================================================================================
@@ -76,14 +85,21 @@ public class Controls : MonoBehaviour
         }
     }
     
-    
-    
     private void SetUpHairTint()
     {
         var hairTintObject = GameObject.Find("HairTintData").gameObject;
         for (var i = 0; i < hairData.Length; i++)
         {
-            hairData[i] = hairTintObject.transform.GetChild(i).GetComponent<HairData>();
+            hairData[i] = hairTintObject.transform.GetChild(i).GetComponent<SpriteData>();
+        }
+    }
+    
+    private void SetUpEyeBrowTint()
+    {
+        var eyeBrowTintObject = GameObject.Find("EyeBrowTintData").gameObject;
+        for (var i = 0; i < eyeBrowData.Length; i++)
+        {
+            eyeBrowData[i] = eyeBrowTintObject.transform.GetChild(i).GetComponent<SpriteData>();
         }
     }
 
@@ -100,9 +116,11 @@ public class Controls : MonoBehaviour
 
     private void SetUpButtons()
     {
-        UpdateSkinTint(0);
-        UpdateHairType(0);
-        UpdateHairColor(0);
+        UpdateType("Hair Type Changed Index: ", "faceIndex", "hairTypeIndex", 0);
+        UpdateType("Eye Brow Tint Changed Index: ", "faceIndex", "eyeBrowTypeIndex", 0);
+        
+        UpdateColor("Hair Color Changed Index: ", "faceIndex", "hairColorIndex", 0);
+        UpdateColor("Eye Brow Color Changed Index: ", "faceIndex", "eyeBrowColorIndex", 0);
     }
     
     //==================================================================================================================
@@ -117,19 +135,68 @@ public class Controls : MonoBehaviour
         }
         parent.transform.GetChild(index).GetComponent<Button>().interactable = false;
     }
+    
+    //=
+    
+    public void UpdateColor(string logMessage, string subTabName, string indexName, int i)
+    {
+        //"Eye Brow Color Changed Index: " 
+        Debug.Log(logMessage + i);
+        //"eyeBrowColorIndex"
+        _faceBigTabKeys[indexName]  = i;
+        UpdateColorSwitch(indexName);
+        ChangeButtonActive(colorButtonParents[_subTabKeys[subTabName]], _faceBigTabKeys[indexName]);
+    }
+
+    private void UpdateColorSwitch(string indexName)
+    {
+        switch (indexName)
+        {
+            case "hairColorIndex":
+            {
+                ChangeHairModel();
+                ChangeHairColorMenu();
+                break;
+            }
+            case "eyeBrowColorIndex":
+            {
+                ChangeEyeBrowModel();
+                ChangeEyeBrowColorMenu();
+                break;
+            }
+        }
+    }
+    
+    public void UpdateType(string logMessage, string subTabName, string indexName, int i)
+    {
+        Debug.Log(logMessage + i);
+        _faceBigTabKeys[indexName] = i;
+        UpdateTypeSwitch(indexName);
+        ChangeButtonActive(buttonsParents[_subTabKeys[subTabName]], _faceBigTabKeys[indexName]);
+    }
+    
+    private void UpdateTypeSwitch(string indexName)
+    {
+        switch (indexName)
+        {
+            case "hairTypeIndex":
+            {
+                ChangeHairModel();
+                ChangeHairCoordinates();
+                break;
+            }
+            case "eyeBrowTypeIndex":
+            {
+                ChangeEyeBrowModel();
+                break;
+            }
+        }
+    }
 
     //==================================================================================================================
     // Skin Tint Methods  
     //==================================================================================================================
-    
-    public void UpdateSkinTint(int index)
-    {
-        Debug.Log("Skin Tint Changed Index: " + index);
-        _faceBigTabKeys["skinTintIndex"] = index;
-        ChangeSkinTintOnModel();
-        ChangeSkinTintOnModel();
-    }
-    
+
     private void ChangeSkinTintOnModel()
     {
         //Head Update 
@@ -165,19 +232,6 @@ public class Controls : MonoBehaviour
     //==================================================================================================================
 
     /// <summary>
-    ///  Used by button to prompt the change of a hair type
-    /// </summary>
-    /// <param name="i"></param>
-    public void UpdateHairType(int i)
-    {
-        Debug.Log("Hair Type Changed Index: " + i);
-        _faceBigTabKeys["hairTypeIndex"] = i;
-        ChangeHairModel();
-        ChangeHairCoordinates();
-        ChangeButtonActive(hairButtonsParent, _faceBigTabKeys["hairTypeIndex"] );
-    }
-
-    /// <summary>
     /// Updates the coordinates of the hair on the model to account for the different sprite sizes  
     /// </summary>
     private void ChangeHairCoordinates()
@@ -198,19 +252,6 @@ public class Controls : MonoBehaviour
                 break;
         }
     }
-    
-    /// <summary>
-    /// Used by button to prompt change to a new hair color. i is set as the new index for the color selected. 
-    /// </summary>
-    /// <param name="i"></param>
-    public void UpdateHairColor(int i)
-    {
-        Debug.Log("Hair Color Changed Index: " + i);
-        _faceBigTabKeys["hairColorIndex"]  = i;
-        ChangeHairModel();
-        ChangeHairColorMenu();
-        ChangeButtonActive(hairColorButtonParent, _faceBigTabKeys["hairColorIndex"]);
-    }
 
     /// <summary>
     /// Updates the hair that's seen on the icon, changing the color of each type 
@@ -222,7 +263,7 @@ public class Controls : MonoBehaviour
         //Updates all the other hair to the new color 
         for (var i = 1; i < hairIcons.Length; i++)
         {
-            hairIcons[i].sprite =  hairData[_faceBigTabKeys["hairColorIndex"]].hair[i - 1];
+            hairIcons[i].sprite =  hairData[_faceBigTabKeys["hairColorIndex"]].spriteData[i - 1];
         }
     }
     
@@ -237,8 +278,49 @@ public class Controls : MonoBehaviour
         else
         {
             facePart[0].enabled = true;
-            facePart[0].sprite = hairData[_faceBigTabKeys["hairColorIndex"]].hair[_faceBigTabKeys["hairTypeIndex"] - 1];   
+            facePart[0].sprite = hairData[_faceBigTabKeys["hairColorIndex"]].spriteData[_faceBigTabKeys["hairTypeIndex"] - 1];   
+        }
+    }
+    
+    //==================================================================================================================
+    // Eye Brow Methods 
+    //==================================================================================================================
+
+    /// <summary>
+    /// Updates the hair that's seen on the icon, changing the color of each type 
+    /// </summary>
+    private void ChangeEyeBrowColorMenu()
+    {
+        //Sets the first icon to have no hair 
+        eyeBrowIcons[0].enabled = false;
+        //Updates all the other hair to the new color 
+        for (var i = 1; i < eyeBrowIcons.Length; i++)
+        {
+            eyeBrowIcons[i].sprite =  eyeBrowData[_faceBigTabKeys["eyeBrowColorIndex"]].spriteData[i - 1];
         }
     }
 
+    /// <summary>
+    /// Updates the eye brows that's displayed on the model  
+    /// </summary>
+    private void ChangeEyeBrowModel()
+    {
+        //If bold turn hair off
+        if (_faceBigTabKeys["eyeBrowTypeIndex"] == 0)
+        {
+            facePart[5].enabled = false;
+            facePart[6].enabled = false; 
+        }
+        //Else turn hair on and change to the desired style 
+        else
+        {
+            facePart[5].enabled = true;
+            facePart[5].sprite = eyeBrowData[_faceBigTabKeys["eyeBrowColorIndex"]].spriteData[_faceBigTabKeys["eyeBrowTypeIndex"] - 1];   
+            
+            facePart[6].enabled = true;
+            facePart[6].sprite = eyeBrowData[_faceBigTabKeys["eyeBrowColorIndex"]].spriteData[_faceBigTabKeys["eyeBrowTypeIndex"] - 1];   
+
+        }
+    }
+    
 }
