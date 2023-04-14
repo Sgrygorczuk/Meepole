@@ -14,48 +14,65 @@ public class SpriteData : MonoBehaviour
         {
             case 0:
             {
-                ConnectHair();
+                Connect("Sprites/Hair/tint", "Hair");
                 break;
             }
             case 1:
             {
-                ConnectEyeBrow();
+                Connect("Sprites/EyeBrows/tint" , "EyeBrow");
                 break;
             }
             case 2:
             {
-                ConnectEyes();
+                Connect("Sprites/Eyes/tint", "Eye");
+                break;
+            }
+            case 3:
+            {
+                Connect("Sprites/Nose/tint", "Nose");
+                break;
+            }
+            case 4:
+            {
+                ConnectBody("Sprites/Arm/tint", "_arm");
+                break;
+            }
+            case 5:
+            {
+                ConnectBody("Sprites/Hand/tint", "_hand");
+                break;
+            }
+            case 6:
+            {
+                ConnectBody("Sprites/Leg/tint", "_leg");
+                break;
+            }
+            case 7:
+            {
+                ConnectBody("Sprites/Head/tint", "_head");
+                break;
+            }
+            case 8:
+            {
+                ConnectBody("Sprites/Neck/tint", "_neck");
                 break;
             }
         }
     }
 
-    private void ConnectHair()
+    private void Connect(string startPath, string endPath)
     {
         for (var i = 0; i < spriteData.Length; i++)
         {
-            spriteData[i] =  Resources.Load<Sprite>("Sprites/Hair/tint" + (index + 1) + "Hair" + (i+1));   
+            spriteData[i] =  Resources.Load<Sprite>(startPath + (index + 1) + endPath + (i+1));   
         }
     }
     
-    private void ConnectEyeBrow()
+    private void ConnectBody(string startPath, string endPath)
     {
         for (var i = 0; i < spriteData.Length; i++)
         {
-            spriteData[i] =  Resources.Load<Sprite>("Sprites/EyeBrows/tint" + (index + 1) + "EyeBrow" + (i+1));   
+            spriteData[i] =  Resources.Load<Sprite>(startPath + (i + 1) + endPath);   
         }
-    }
-
-    private void ConnectEyes()
-    {
-        for (var i = 0; i < spriteData.Length; i++)
-        {
-            spriteData[i] =  Resources.Load<Sprite>("Sprites/Eyes/tint" + (index + 1) + "Eye" + (i+1));   
-        }
-    }
-
-    private void ConnectSkinTint()
-    {
-        
     }
 }

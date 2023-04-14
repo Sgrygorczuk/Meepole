@@ -8,18 +8,21 @@ public class ButtonSpawner : MonoBehaviour
     public GameObject hairButtonPreFab;
     public GameObject colorButtonPreFab;
 
-    private Vector2 _oringPanel = new(-245, 0);
-    private Vector2 _origin = new(-220, 300);
+    private readonly Vector2 _originPanel = new(-245, 0);
+    private readonly Vector2 _origin = new(-220, 300);
     private Controls _controls;
-    private float _spacing = 150;
-    private float _spacing2 = 70;
+    private const float VerticalSpacing = 150;
+    private const float HorizontalSpacing = 70;
 
     public Color[] hairColor = new Color[8];
     public Color[] eyebrowColor = new Color[8];
-
+    public Color[] eyeColor = new Color[5];
+    public Color[] noseColor = new Color[8];
 
     public void SpawnButtons()
     {
+        SetUpParentArrays();
+        
         _controls = GameObject.Find("Controls").GetComponent<Controls>();
 
         _controls.hairIcons = MakeSelectButtons(0, _controls.hairIcons.Length, "Hair Type Changed Index: ",
@@ -27,11 +30,34 @@ public class ButtonSpawner : MonoBehaviour
 
         _controls.eyeBrowIcons = MakeSelectButtons(1, _controls.eyeBrowIcons.Length, "Eye Brow Tint Changed Index: ",
             "faceIndex", "eyeBrowTypeIndex");
+        _controls.eyeIcons = MakeSelectButtons(2, _controls.eyeIcons.Length, "Eye Tint Changed Index: ",
+            "faceIndex", "eyeTypeIndex");
+        _controls.noseIcons = MakeSelectButtons(3, _controls.noseIcons.Length, "Nose Tint Changed Index: ",
+            "faceIndex", "noseTypeIndex");
+        
 
         MakeColorButtons(0, hairColor, "Hair Color Changed Index: ",
             "faceIndex", "hairColorIndex");
         MakeColorButtons(1, eyebrowColor, "Eye Brow Color Changed Index: ",
             "faceIndex", "eyeBrowColorIndex");
+        MakeColorButtons(2, eyeColor, "Eye Color Changed Index: ",
+            "faceIndex", "eyeColorIndex");
+        MakeColorButtons(3, noseColor, "Nose Color Changed Index: ",
+            "faceIndex", "noseColorIndex");
+    }
+
+    private void SetUpParentArrays()
+    {
+        var tabParent = GameObject.Find("Canvas").transform.Find("Big_Tabs").transform.Find("Face_Tabs").gameObject;
+        var childCount = tabParent.transform.childCount;
+        buttonParents = new Transform[childCount];
+        colorButtonParent = new Transform[childCount];
+ 
+        for (var i = 0; i < tabParent.transform.childCount; i++)
+        {
+            buttonParents[i] = tabParent.transform.GetChild(i).transform.GetChild(0).transform;
+            colorButtonParent[i] = tabParent.transform.GetChild(i).transform.GetChild(1).transform;
+        }
     }
 
     private void MakeColorButtons(int colorButtonParentIndex, Color[] colorArray, string logMessage, string subTabName,
@@ -75,7 +101,7 @@ public class ButtonSpawner : MonoBehaviour
         
         //Links the button to be parented and placed in correct spot on board  
         newButton.transform.SetParent(buttonParents[buttonParentIndex]);
-        newButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(_origin.x + _spacing * (i%4), _origin.y - _spacing * ((i/4)%4));
+        newButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(_origin.x + VerticalSpacing * (i%4), _origin.y - VerticalSpacing * ((i/4)%4));
 
         // Connect the On Click () event to the buttonScript component's OnButtonClick() function
         newButton.GetComponent<Button>().onClick.AddListener(() => _controls.UpdateType(
@@ -101,7 +127,7 @@ public class ButtonSpawner : MonoBehaviour
         
         //Links the button to be parented and placed in correct spot on board  
         newButton.transform.SetParent(colorButtonParent[colorButtonParentIndex]);
-        newButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(_oringPanel.x + _spacing2 * i, _oringPanel.y);
+        newButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(_originPanel.x + HorizontalSpacing * i, _originPanel.y);
         
         //Grabs the icon 
         newButton.transform.GetChild(0).GetComponent<Image>().color = colorArray[i];
