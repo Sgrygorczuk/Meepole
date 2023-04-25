@@ -2,12 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d01a31be-f1c0-4cba-8de5-ec5ff03452b5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/CommonIndexes.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/CommonIndexes.cs.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MiniGames/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MiniGames/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/Sprites/Mouth/mouth_glad.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/Sprites/Mouth/mouth_glad.png.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/Sprites/Mouth/mouth_happy.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/Sprites/Mouth/mouth_happy.png.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/Sprites/Mouth/mouth_oh.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/Sprites/Mouth/mouth_oh.png.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/Sprites/Mouth/mouth_sad.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/Sprites/Mouth/mouth_sad.png.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/Sprites/Mouth/mouth_straight.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/Sprites/Mouth/mouth_straight.png.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/Sprites/Mouth/mouth_teethLower.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/Sprites/Mouth/mouth_teethLower.png.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/Sprites/Mouth/mouth_teethUpper.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Resources/Sprites/Mouth/mouth_teethUpper.png.meta" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/PersonMaker.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/PersonMaker.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/ButtonSpawner.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/ButtonSpawner.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Controls.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Controls.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Data/SpawnData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Data/SpawnData.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Data/SpriteData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Data/SpriteData.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -91,6 +104,8 @@
       <workItem from="1680804958286" duration="8216000" />
       <workItem from="1680821721883" duration="4034000" />
       <workItem from="1681418601572" duration="11220000" />
+      <workItem from="1682437850104" duration="244000" />
+      <workItem from="1682438141583" duration="5212000" />
     </task>
     <servers />
   </component>

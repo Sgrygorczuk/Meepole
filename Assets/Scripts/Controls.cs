@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,7 +21,7 @@ public class Controls : MonoBehaviour
         {"bottomIndex", 0}
     };
 
-    private readonly Dictionary<string, int> _faceBigTabKeys = new Dictionary<string, int>
+    public readonly Dictionary<string, int> FaceBigTabKeys = new Dictionary<string, int>
     {   
         {"noseTypeIndex", 0},
         {"noseColorIndex", 0},
@@ -31,25 +32,25 @@ public class Controls : MonoBehaviour
         {"eyeTypeIndex", 0},
         {"eyeColorIndex", 0},
         {"mouthIndex", 0},
+        {"mouthColorIndex", 0},
     };
+    
+    [Serializable] public class ButtonLinks
+    {
+        public SpriteData[] spriteData = new SpriteData[8];
+        public string spriteDataPath;
+        public Image[] icons = new Image[15];
+    }
+    
+    [SerializeField] public ButtonLinks[] buttonLinks = { };
 
     private Vector2 _hairOrigin = Vector2.zero;
     private const int PixelPerUnit = 200;
 
     public GameObject faceSubTabButtonsParent;
-
-    public SpriteData[] hairData = new SpriteData[8];
+    
     public Vector2[] hairCoordinates = new Vector2[14];
-    public Image[] hairIcons = new Image[15];
     
-    public SpriteData[] eyeBrowData = new SpriteData[8]; 
-    public Image[] eyeBrowIcons = new Image[4];
-    
-    public SpriteData[] eyeData = new SpriteData[5]; 
-    public Image[] eyeIcons = new Image[3];
-    
-    public SpriteData[] noseData = new SpriteData[8]; 
-    public Image[] noseIcons = new Image[4];
     public SpriteData[] armData = new SpriteData[8];
     public SpriteData[] handData = new SpriteData[8];
     public SpriteData[] legData = new SpriteData[8];
@@ -67,10 +68,11 @@ public class Controls : MonoBehaviour
         
         _spawnData.StartSpawnData();
 
-        hairData = SetUpTintData(hairData.Length, "HairTintData");
-        eyeBrowData = SetUpTintData(eyeBrowData.Length, "EyeBrowTintData");
-        eyeData = SetUpTintData(eyeData.Length, "EyeTintData");
-        noseData = SetUpTintData(noseData.Length, "NoseTintData");
+        //Sets Up Sprite Data and Icons for the different body parts 
+        foreach (var t in buttonLinks)
+        {
+            t.spriteData = SetUpTintData(t.spriteData.Length, t.spriteDataPath);
+        }
         armData = SetUpTintData(1, "ArmTintData");
         handData = SetUpTintData(1, "HandTintData");
         legData = SetUpTintData(1, "LegTintData");
@@ -90,7 +92,7 @@ public class Controls : MonoBehaviour
 
     private static SpriteData[] SetUpTintData(int size, string path)
     {
-        Debug.Log("Path: " + path +" with size of: " + size);
+        Debug.Log("Path: " + path + " with size of: " + size);
         var data = new SpriteData[size];
         var dataObject = GameObject.Find(path).gameObject;
         for (var i = 0; i < size; i++)
@@ -147,42 +149,44 @@ public class Controls : MonoBehaviour
         //"Eye Brow Color Changed Index: " 
         Debug.Log(logMessage + i);
         //"eyeBrowColorIndex"
-        _faceBigTabKeys[indexName]  = i;
+        FaceBigTabKeys[indexName]  = i;
         UpdateColorSwitch(indexName);
-        ChangeButtonActive(_buttonSpawner.colorButtonParent[_subTabKeys[subTabName]], _faceBigTabKeys[indexName]);
+        ChangeButtonActive(_buttonSpawner.data[_subTabKeys[subTabName]].colorButtonParentObject, FaceBigTabKeys[indexName]);
     }
 
     private void UpdateColorSwitch(string indexName)
     {
+        var index = 0; 
+        
         switch (indexName)
         {
             case "hairColorIndex":
             {
-                hairIcons[0].enabled = false;
+                index = 0;
                 ChangeHairModel();
-                hairIcons = ChangeColorMenu(hairIcons, hairData, "hairColorIndex");
                 break;
             }
             case "eyeBrowColorIndex":
             {
-                eyeBrowIcons[0].enabled = false;
+                index = 1;
                 ChangeEyeBrowModel();
-                eyeBrowIcons = ChangeColorMenu(eyeBrowIcons, eyeBrowData, "eyeBrowColorIndex");
                 break;
             }
             case "eyeColorIndex":
             {
-                eyeIcons[0].enabled = false;
+                index = 2;
                 ChangeEyeModel();
-                eyeIcons = ChangeColorMenu(eyeIcons, eyeData, "eyeColorIndex");
                 break;
             }
             case "noseColorIndex":
             {
-                noseIcons[0].enabled = false;
+                index = 3;
                 ChangeSkinModel();
-                noseIcons = ChangeColorMenu(noseIcons, noseData, "noseColorIndex");
                 ChangeSkinColorOnModel();
+                break;
+            }
+            case "mouthColorIndex":
+            {
                 break;
             }
             default:
@@ -191,6 +195,9 @@ public class Controls : MonoBehaviour
                 break;
             }
         }
+        
+        buttonLinks[index].icons[0].enabled = false;
+        buttonLinks[index].icons = ChangeColorMenu(buttonLinks[index].icons, buttonLinks[index].spriteData, indexName);
     }
     
     private Image[] ChangeColorMenu(Image[] icons, SpriteData[] data, string path)
@@ -198,7 +205,7 @@ public class Controls : MonoBehaviour
         //Updates all the other hair to the new color 
         for (var i = 1; i < icons.Length; i++)
         {
-            icons[i].sprite =  data[_faceBigTabKeys[path]].spriteData[i - 1];
+            icons[i].sprite =  data[FaceBigTabKeys[path]].spriteData[i - 1];
         }
         return icons;
     }
@@ -206,28 +213,28 @@ public class Controls : MonoBehaviour
     private void ChangeSkinColorOnModel()
     {
         //Head Update 
-        bodyPart[0].sprite = headData[0].spriteData[_faceBigTabKeys["noseColorIndex"]];
+        bodyPart[0].sprite = headData[0].spriteData[FaceBigTabKeys["noseColorIndex"]];
         
         //Neck Update 
-        bodyPart[1].sprite = neckData[0].spriteData[_faceBigTabKeys["noseColorIndex"]];
+        bodyPart[1].sprite = neckData[0].spriteData[FaceBigTabKeys["noseColorIndex"]];
         //Arms 
-        bodyPart[2].sprite = armData[0].spriteData[_faceBigTabKeys["noseColorIndex"]];
-        bodyPart[4].sprite = armData[0].spriteData[_faceBigTabKeys["noseColorIndex"]];
+        bodyPart[2].sprite = armData[0].spriteData[FaceBigTabKeys["noseColorIndex"]];
+        bodyPart[4].sprite = armData[0].spriteData[FaceBigTabKeys["noseColorIndex"]];
         //Hands
-        bodyPart[3].sprite = handData[0].spriteData[_faceBigTabKeys["noseColorIndex"]];
-        bodyPart[5].sprite = handData[0].spriteData[_faceBigTabKeys["noseColorIndex"]];
+        bodyPart[3].sprite = handData[0].spriteData[FaceBigTabKeys["noseColorIndex"]];
+        bodyPart[5].sprite = handData[0].spriteData[FaceBigTabKeys["noseColorIndex"]];
         //Legs 
-        bodyPart[6].sprite = legData[0].spriteData[_faceBigTabKeys["noseColorIndex"]];
-        bodyPart[7].sprite = legData[0].spriteData[_faceBigTabKeys["noseColorIndex"]];
+        bodyPart[6].sprite = legData[0].spriteData[FaceBigTabKeys["noseColorIndex"]];
+        bodyPart[7].sprite = legData[0].spriteData[FaceBigTabKeys["noseColorIndex"]];
     }
     
     public void UpdateType(string logMessage, string subTabName, string indexName, int i)
     {
         Debug.Log(logMessage + i);
-        _faceBigTabKeys[indexName] = i;
+        FaceBigTabKeys[indexName] = i;
         UpdateTypeSwitch(indexName);
         Debug.Log(_subTabKeys[subTabName]);
-        ChangeButtonActive(_buttonSpawner.buttonParents[_subTabKeys[subTabName]], _faceBigTabKeys[indexName]);
+        ChangeButtonActive(_buttonSpawner.data[_subTabKeys[subTabName]].buttonParentObject, FaceBigTabKeys[indexName]);
     }
     
     private void UpdateTypeSwitch(string indexName)
@@ -272,19 +279,19 @@ public class Controls : MonoBehaviour
     /// </summary>
     private void ChangeHairCoordinates()
     {
-        switch (_faceBigTabKeys["hairTypeIndex"] )
+        switch (FaceBigTabKeys["hairTypeIndex"] )
         {
             //If Bold Don't Adjust 
             case 0:
                 return;
             //If Short Hair Adjust by adding 
             case < 9:
-                facePart[0].transform.position = _hairOrigin + hairCoordinates[_faceBigTabKeys["hairTypeIndex"]  - 1];
+                facePart[0].transform.position = _hairOrigin + hairCoordinates[FaceBigTabKeys["hairTypeIndex"]  - 1];
                 break;
             //If Long hair adjust x by adding and y by subbing 
             default:
                 facePart[0].transform.position = new Vector3(_hairOrigin.x,
-                    _hairOrigin.y - hairCoordinates[_faceBigTabKeys["hairTypeIndex"]  - 1].y, 0);
+                    _hairOrigin.y - hairCoordinates[FaceBigTabKeys["hairTypeIndex"]  - 1].y, 0);
                 break;
         }
     }
@@ -295,12 +302,12 @@ public class Controls : MonoBehaviour
     private void ChangeHairModel()
     {
         //If bold turn hair off
-        if (_faceBigTabKeys["hairTypeIndex"] == 0) { facePart[0].enabled = false; }
+        if (FaceBigTabKeys["hairTypeIndex"] == 0) { facePart[0].enabled = false; }
         //Else turn hair on and change to the desired style 
         else
         {
             facePart[0].enabled = true;
-            facePart[0].sprite = hairData[_faceBigTabKeys["hairColorIndex"]].spriteData[_faceBigTabKeys["hairTypeIndex"] - 1];   
+            facePart[0].sprite = buttonLinks[0].spriteData[FaceBigTabKeys["hairColorIndex"]].spriteData[FaceBigTabKeys["hairTypeIndex"] - 1];   
         }
     }
     
@@ -314,7 +321,7 @@ public class Controls : MonoBehaviour
     private void ChangeEyeBrowModel()
     {
         //If bold turn hair off
-        if (_faceBigTabKeys["eyeBrowTypeIndex"] == 0)
+        if (FaceBigTabKeys["eyeBrowTypeIndex"] == 0)
         {
             facePart[5].enabled = false;
             facePart[6].enabled = false; 
@@ -323,10 +330,10 @@ public class Controls : MonoBehaviour
         else
         {
             facePart[5].enabled = true;
-            facePart[5].sprite = eyeBrowData[_faceBigTabKeys["eyeBrowColorIndex"]].spriteData[_faceBigTabKeys["eyeBrowTypeIndex"] - 1];   
+            facePart[5].sprite = buttonLinks[1].spriteData[FaceBigTabKeys["eyeBrowColorIndex"]].spriteData[FaceBigTabKeys["eyeBrowTypeIndex"] - 1];   
             
             facePart[6].enabled = true;
-            facePart[6].sprite = eyeBrowData[_faceBigTabKeys["eyeBrowColorIndex"]].spriteData[_faceBigTabKeys["eyeBrowTypeIndex"] - 1];   
+            facePart[6].sprite = buttonLinks[1].spriteData[FaceBigTabKeys["eyeBrowColorIndex"]].spriteData[FaceBigTabKeys["eyeBrowTypeIndex"] - 1];   
 
         }
     }
@@ -341,7 +348,7 @@ public class Controls : MonoBehaviour
     private void ChangeEyeModel()
     {
         //If bold turn hair off
-        if (_faceBigTabKeys["eyeTypeIndex"] == 0)
+        if (FaceBigTabKeys["eyeTypeIndex"] == 0)
         {
             facePart[2].enabled = false;
             facePart[3].enabled = false;
@@ -350,9 +357,9 @@ public class Controls : MonoBehaviour
         else
         {
             facePart[2].enabled = true;
-            facePart[2].sprite = eyeData[_faceBigTabKeys["eyeColorIndex"]].spriteData[_faceBigTabKeys["eyeTypeIndex"] - 1]; 
+            facePart[2].sprite = buttonLinks[2].spriteData[FaceBigTabKeys["eyeColorIndex"]].spriteData[FaceBigTabKeys["eyeTypeIndex"] - 1]; 
             facePart[3].enabled = true;
-            facePart[3].sprite = eyeData[_faceBigTabKeys["eyeColorIndex"]].spriteData[_faceBigTabKeys["eyeTypeIndex"] - 1]; 
+            facePart[3].sprite = buttonLinks[2].spriteData[FaceBigTabKeys["eyeColorIndex"]].spriteData[FaceBigTabKeys["eyeTypeIndex"] - 1]; 
         }
     }
     
@@ -366,12 +373,32 @@ public class Controls : MonoBehaviour
     private void ChangeSkinModel()
     {
         //If bold turn hair off
-        if (_faceBigTabKeys["noseTypeIndex"] == 0) { facePart[1].enabled = false; }
+        if (FaceBigTabKeys["noseTypeIndex"] == 0) { facePart[1].enabled = false; }
         //Else turn hair on and change to the desired style 
         else
         {
             facePart[1].enabled = true;
-            facePart[1].sprite = noseData[_faceBigTabKeys["noseColorIndex"]].spriteData[_faceBigTabKeys["noseTypeIndex"] - 1];
+            facePart[1].sprite = buttonLinks[3].spriteData[FaceBigTabKeys["noseColorIndex"]].spriteData[FaceBigTabKeys["noseTypeIndex"] - 1];
+        }
+    }
+    
+    //==================================================================================================================
+    // Mouth Tint Methods  
+    //==================================================================================================================
+
+    //TODO Connect 
+    /// <summary>
+    /// Updates the hair that's displayed on the model  
+    /// </summary>
+    private void MouthSkinModel()
+    {
+        //If bold turn hair off
+        if (FaceBigTabKeys["noseTypeIndex"] == 0) { facePart[1].enabled = false; }
+        //Else turn hair on and change to the desired style 
+        else
+        {
+            facePart[1].enabled = true;
+            facePart[1].sprite = buttonLinks[3].spriteData[FaceBigTabKeys["noseColorIndex"]].spriteData[FaceBigTabKeys["noseTypeIndex"] - 1];
         }
     }
 

@@ -1,62 +1,45 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ButtonSpawner : MonoBehaviour
 {
-    public Transform[] buttonParents;
-    public Transform[] colorButtonParent;
     public GameObject hairButtonPreFab;
     public GameObject colorButtonPreFab;
 
     private readonly Vector2 _originPanel = new(-245, 0);
     private readonly Vector2 _origin = new(-220, 300);
-    private Controls _controls;
     private const float VerticalSpacing = 150;
     private const float HorizontalSpacing = 70;
+    
+    [Serializable] public class ButtonSpawnerData
+    {
+        public Transform buttonParentObject;
+        public Transform colorButtonParentObject;
+        public Color[] color = { };
+        public string subTabName;
+        public string indexName;
+    }
 
-    public Color[] hairColor = new Color[8];
-    public Color[] eyebrowColor = new Color[8];
-    public Color[] eyeColor = new Color[5];
-    public Color[] noseColor = new Color[8];
+    [SerializeField] public ButtonSpawnerData[] data = { };
+    
+    private Controls _controls;
 
     public void SpawnButtons()
     {
-        SetUpParentArrays();
-        
         _controls = GameObject.Find("Controls").GetComponent<Controls>();
-
-        _controls.hairIcons = MakeSelectButtons(0, _controls.hairIcons.Length, "Hair Type Changed Index: ",
-            "faceIndex", "hairTypeIndex");
-
-        _controls.eyeBrowIcons = MakeSelectButtons(1, _controls.eyeBrowIcons.Length, "Eye Brow Tint Changed Index: ",
-            "faceIndex", "eyeBrowTypeIndex");
-        _controls.eyeIcons = MakeSelectButtons(2, _controls.eyeIcons.Length, "Eye Tint Changed Index: ",
-            "faceIndex", "eyeTypeIndex");
-        _controls.noseIcons = MakeSelectButtons(3, _controls.noseIcons.Length, "Nose Tint Changed Index: ",
-            "faceIndex", "noseTypeIndex");
         
-
-        MakeColorButtons(0, hairColor, "Hair Color Changed Index: ",
-            "faceIndex", "hairColorIndex");
-        MakeColorButtons(1, eyebrowColor, "Eye Brow Color Changed Index: ",
-            "faceIndex", "eyeBrowColorIndex");
-        MakeColorButtons(2, eyeColor, "Eye Color Changed Index: ",
-            "faceIndex", "eyeColorIndex");
-        MakeColorButtons(3, noseColor, "Nose Color Changed Index: ",
-            "faceIndex", "noseColorIndex");
+        CreateAllButtons();
     }
 
-    private void SetUpParentArrays()
+    private void CreateAllButtons()
     {
-        var tabParent = GameObject.Find("Canvas").transform.Find("Big_Tabs").transform.Find("Face_Tabs").gameObject;
-        var childCount = tabParent.transform.childCount;
-        buttonParents = new Transform[childCount];
-        colorButtonParent = new Transform[childCount];
- 
-        for (var i = 0; i < tabParent.transform.childCount; i++)
+        for (var i = 0; i < data.Length; i++)
         {
-            buttonParents[i] = tabParent.transform.GetChild(i).transform.GetChild(0).transform;
-            colorButtonParent[i] = tabParent.transform.GetChild(i).transform.GetChild(1).transform;
+            MakeColorButtons(i, data[i].color, data[i].indexName, data[i].subTabName, 
+                data[i].indexName + "ColorIndex");
+            _controls.buttonLinks[i].icons = MakeSelectButtons(i, _controls.buttonLinks[i].icons.Length, data[i].indexName, 
+                data[i].subTabName, data[i].indexName + "TypeIndex");
         }
     }
 
@@ -65,11 +48,20 @@ public class ButtonSpawner : MonoBehaviour
     {
         for (var i = 0; i < colorArray.Length; i++)
         {
-            SpawnColorButton(colorButtonParentIndex, colorArray, logMessage,
+            SpawnColorButton(colorButtonParentIndex, colorArray, logMessage + " Tint Changed Index: ",
                 subTabName, indexName, i);
         }
     }
 
+    /// <summary>
+    /// This will create all of the buttons given the amount of colors provided
+    /// </summary>
+    /// <param name="colorButtonParentIndex"></param> What object will be it's parent 
+    /// <param name="length"></param> How many buttons will we create 
+    /// <param name="logMessage"></param> What will the debug message hold 
+    /// <param name="subTabName"></param> What tab it's connected to 
+    /// <param name="indexName"></param> What index keeps track of it's position 
+    /// <returns></returns>
     private Image[] MakeSelectButtons(int colorButtonParentIndex, int length, string logMessage, string subTabName, string indexName)
     {
         var array = new Image[length];
@@ -100,7 +92,7 @@ public class ButtonSpawner : MonoBehaviour
         var newButton = Instantiate(hairButtonPreFab, transform);
         
         //Links the button to be parented and placed in correct spot on board  
-        newButton.transform.SetParent(buttonParents[buttonParentIndex]);
+        newButton.transform.SetParent(data[buttonParentIndex].buttonParentObject);
         newButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(_origin.x + VerticalSpacing * (i%4), _origin.y - VerticalSpacing * ((i/4)%4));
 
         // Connect the On Click () event to the buttonScript component's OnButtonClick() function
@@ -126,7 +118,7 @@ public class ButtonSpawner : MonoBehaviour
         var newButton = Instantiate(colorButtonPreFab, transform);
         
         //Links the button to be parented and placed in correct spot on board  
-        newButton.transform.SetParent(colorButtonParent[colorButtonParentIndex]);
+        newButton.transform.SetParent(data[colorButtonParentIndex].colorButtonParentObject);
         newButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(_originPanel.x + HorizontalSpacing * i, _originPanel.y);
         
         //Grabs the icon 

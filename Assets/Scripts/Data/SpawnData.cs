@@ -6,8 +6,8 @@ public class SpawnData : MonoBehaviour
     public GameObject[] _parentObjects = new GameObject[] { };
     public int[] _preFabsCount = new int[]{ };
     public int[] _arraySize= new int[]{ };
-    private int currentIndex; 
-    
+    private int currentIndex;
+
     // Start is called before the first frame update
     public void StartSpawnData()
     {

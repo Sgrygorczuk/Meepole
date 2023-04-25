@@ -57,6 +57,11 @@ public class SpriteData : MonoBehaviour
                 ConnectBody("Sprites/Neck/tint", "_neck");
                 break;
             }
+            case 9:
+            {
+                Connect("Sprites/Mouth/tint", "Mouth");
+                break;
+            }
         }
     }
 
