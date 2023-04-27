@@ -4,7 +4,7 @@ public class SpriteData : MonoBehaviour
 {
     public Sprite[] spriteData;
     public int index = 0;
-    
+
     public void ConnectSelect(int preFabIndex, int pathIndex, int arraySize)
     {
         index = pathIndex;
@@ -60,6 +60,31 @@ public class SpriteData : MonoBehaviour
             case 9:
             {
                 Connect("Sprites/Mouth/tint", "Mouth");
+                break;
+            }
+            case 10:
+            {
+                Connect("Sprites/Shirt/tint", "Shirt");
+                break;
+            }
+            case 11:
+            {
+                Connect("Sprites/Sleeve/tint", "Sleeve");
+                break;
+            }
+            case 12:
+            {
+                Connect("Sprites/Belt/tint", "Belt");
+                break;
+            }
+            case 13:
+            {
+                Connect("Sprites/Pants/tint", "Pants");
+                break;
+            }
+            case 14:
+            {
+                Connect("Sprites/Shoes/tint", "Shoes");
                 break;
             }
         }

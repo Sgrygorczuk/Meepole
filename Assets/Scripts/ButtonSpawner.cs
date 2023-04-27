@@ -12,22 +12,21 @@ public class ButtonSpawner : MonoBehaviour
     private const float VerticalSpacing = 150;
     private const float HorizontalSpacing = 70;
     
-    [Serializable] public class ButtonSpawnerData
-    {
-        public Transform buttonParentObject;
-        public Transform colorButtonParentObject;
-        public Color[] color = { };
-        public string subTabName;
-        public string indexName;
-    }
-
-    [SerializeField] public ButtonSpawnerData[] data = { };
+    [HideInInspector] public InspectorEntry.ButtonSpawnerData[] data = { };
     
     private Controls _controls;
+    private InspectorEntry _inspectorEntry; 
 
     public void SpawnButtons()
     {
         _controls = GameObject.Find("Controls").GetComponent<Controls>();
+        _inspectorEntry = GetComponent<InspectorEntry>();
+
+        data = new InspectorEntry.ButtonSpawnerData[_inspectorEntry.ButtonSetUps.Length];
+        for (int i = 0; i < _inspectorEntry.ButtonSetUps.Length; i++)
+        {
+            data[i] = _inspectorEntry.ButtonSetUps[i].ButtonSpawnerDatas;
+        }
         
         CreateAllButtons();
     }
@@ -37,9 +36,9 @@ public class ButtonSpawner : MonoBehaviour
         for (var i = 0; i < data.Length; i++)
         {
             MakeColorButtons(i, data[i].color, data[i].indexName, data[i].subTabName, 
-                data[i].indexName + "ColorIndex");
+                data[i].indexName);
             _controls.buttonLinks[i].icons = MakeSelectButtons(i, _controls.buttonLinks[i].icons.Length, data[i].indexName, 
-                data[i].subTabName, data[i].indexName + "TypeIndex");
+                data[i].subTabName, data[i].indexName);
         }
     }
 
@@ -96,7 +95,7 @@ public class ButtonSpawner : MonoBehaviour
         newButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(_origin.x + VerticalSpacing * (i%4), _origin.y - VerticalSpacing * ((i/4)%4));
 
         // Connect the On Click () event to the buttonScript component's OnButtonClick() function
-        newButton.GetComponent<Button>().onClick.AddListener(() => _controls.UpdateType(
+        newButton.GetComponent<Button>().onClick.AddListener(() => _controls.UpdateType(buttonParentIndex,
             logMessage, subTabName, indexName, i));
         
         return newButton.transform.GetChild(0).GetChild(0).GetComponent<Image>();
@@ -125,7 +124,7 @@ public class ButtonSpawner : MonoBehaviour
         newButton.transform.GetChild(0).GetComponent<Image>().color = colorArray[i];
 
         // Connect the On Click () event to the buttonScript component's OnButtonClick() function
-        newButton.GetComponent<Button>().onClick.AddListener(() => _controls.UpdateColor(
+        newButton.GetComponent<Button>().onClick.AddListener(() => _controls.UpdateColor(colorButtonParentIndex, 
             logMessage, subTabName, indexName, i));
     }
 
