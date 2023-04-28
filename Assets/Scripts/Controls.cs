@@ -204,7 +204,14 @@ public class Controls : MonoBehaviour
             }
         }
         
-        ChangePartModel(indexName + "ColorIndex", indexName + "TypeIndex", parentIndex);
+        if (buttonLinks[parentIndex].canBeEmpty)
+        {
+            ChangePartModel(indexName + "ColorIndex", indexName + "TypeIndex", parentIndex);   
+        }
+        else
+        {
+            ChangePartModelNoEmpty(indexName + "ColorIndex", indexName + "TypeIndex", parentIndex);   
+        }
         
         if (buttonLinks[parentIndex].canBeEmpty)
         {

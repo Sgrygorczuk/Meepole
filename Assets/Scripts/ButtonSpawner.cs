@@ -90,8 +90,8 @@ public class ButtonSpawner : MonoBehaviour
         // Instantiate the button prefab
         var newButton = Instantiate(hairButtonPreFab, transform);
         
-        //Links the button to be parented and placed in correct spot on board  
-        newButton.transform.SetParent(data[buttonParentIndex].buttonParentObject);
+        //Links the button to be parented and placed in correct spot on board, the false keeps it to scale properly  
+        newButton.transform.SetParent(data[buttonParentIndex].buttonParentObject, false);
         newButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(_origin.x + VerticalSpacing * (i%4), _origin.y - VerticalSpacing * ((i/4)%4));
 
         // Connect the On Click () event to the buttonScript component's OnButtonClick() function
@@ -116,8 +116,8 @@ public class ButtonSpawner : MonoBehaviour
         // Instantiate the button prefab
         var newButton = Instantiate(colorButtonPreFab, transform);
         
-        //Links the button to be parented and placed in correct spot on board  
-        newButton.transform.SetParent(data[colorButtonParentIndex].colorButtonParentObject);
+        //Links the button to be parented and placed in correct spot on board, the false keeps it to scale properly 
+        newButton.transform.SetParent(data[colorButtonParentIndex].colorButtonParentObject, false);
         newButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(_originPanel.x + HorizontalSpacing * i, _originPanel.y);
         
         //Grabs the icon 
