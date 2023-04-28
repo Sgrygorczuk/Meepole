@@ -1,15 +1,28 @@
 using UnityEngine;
 
+/// <summary>
+/// Called in Spawn Data and used by the TintData prefab, used to fill out the sprite data, such as skin tones, shirts,
+/// and all other types and their color variants. This could very well be refactored to worked better. 
+/// </summary>
 public class SpriteData : MonoBehaviour
 {
+    //This row of sprites 
     public Sprite[] spriteData;
-    public int index = 0;
+    //??? 
+    public int index ;
 
+    /// <summary>
+    /// Takes in the information to find the right sprite asset and connect them to the array that controls can connect to
+    /// </summary> 
+    /// <param name="preFabIndex"></param> Which item in the array is this 
+    /// <param name="pathIndex"></param>  ???
+    /// <param name="arraySize"></param> Tells us how many types of items there is 
     public void ConnectSelect(int preFabIndex, int pathIndex, int arraySize)
     {
         index = pathIndex;
         spriteData = new Sprite[arraySize];
         
+        //Links to respective tab in the resource folder 
         switch (preFabIndex)
         {
             case 0:
@@ -90,6 +103,11 @@ public class SpriteData : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Properly connect the data 
+    /// </summary>
+    /// <param name="startPath"></param>
+    /// <param name="endPath"></param>
     private void Connect(string startPath, string endPath)
     {
         for (var i = 0; i < spriteData.Length; i++)
@@ -98,6 +116,11 @@ public class SpriteData : MonoBehaviour
         }
     }
     
+    /// <summary>
+    /// Dumb off shoot I made to suit one specfic type of data that makes this harder to clean up 
+    /// </summary>
+    /// <param name="startPath"></param>
+    /// <param name="endPath"></param>
     private void ConnectBody(string startPath, string endPath)
     {
         for (var i = 0; i < spriteData.Length; i++)

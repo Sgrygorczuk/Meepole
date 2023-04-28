@@ -1,12 +1,14 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
+/// <summary>
+/// This script is the central script that updates the all of the visual elements, grabs data and pass it on to installation 
+/// </summary>
 public class Controls : MonoBehaviour
 {
-    
+    //Initial way of connecting different body parts got replaced a bit but some core functions need it without being reworked 
     [Tooltip("0 = Head,\n 1 = Neck,\n 2 = L_Arm,\n 3 = L_Hand,\n 4 = R_Arm,\n 5 = R_Hand,\n 6 = L_Leg,\n" +
              "7 = R_Leg,\n 8 = L_Sleeve,\n 9 = R_Sleeve,,\n 10 = L_Pants,\n 11 = R_Pants")]
     public SpriteRenderer[] bodyPart = new SpriteRenderer[12];
@@ -14,14 +16,6 @@ public class Controls : MonoBehaviour
     [Tooltip("0 = Hair,\n 1 = Nose,\n 2 = L_Eyes,\n 3 = R_Eye,\n 4 = Mouth, \n 5 = L_EyeBrow,\n 6 = R_EyeBrow,")]
     [HideInInspector] public SpriteRenderer[] facePart = new SpriteRenderer[7];
     
-    
-    private readonly Dictionary<string, int> _subTabKeys = new Dictionary<string, int>
-    {   
-        {"faceIndex", 0},
-        {"bodyIndex", 0},
-        {"bottomIndex", 0}
-    };
-
     private readonly Dictionary<string, int> FaceBigTabKeys = new Dictionary<string, int>
     {   
         {"noseTypeIndex", 0},
@@ -147,27 +141,27 @@ public class Controls : MonoBehaviour
 
     public void SetUpButtons()
     {
-        UpdateType(0, "Hair Type Changed Index: ", "faceIndex", "hair", Random.Range(0, buttonLinks[0].icons.Length));
-        UpdateType(1,"Eye Brow Tint Changed Index: ", "faceIndex", "eyeBrow", Random.Range(0, buttonLinks[1].icons.Length));
-        UpdateType(2, "Eye Tint Changed Index: ", "faceIndex", "eye", Random.Range(1, buttonLinks[2].icons.Length));
-        UpdateType(3, "Skin Tint Changed Index: ", "faceIndex", "nose", Random.Range(0, buttonLinks[3].icons.Length));
-        UpdateType(4, "Mouth Tint Changed Index: ", "faceIndex", "mouth", Random.Range(0, buttonLinks[4].icons.Length));
-        UpdateType(5, "Shirt Tint Changed Index: ", "bodyIndex", "shirt", Random.Range(1, buttonLinks[5].icons.Length));
-        UpdateType(6, "Sleeve Tint Changed Index: ", "bodyIndex", "sleeve", Random.Range(0, buttonLinks[6].icons.Length));
-        UpdateType(7, "Belt Tint Changed Index: ", "bottomIndex", "belt", Random.Range(1, buttonLinks[7].icons.Length));
-        UpdateType(8, "Pants Tint Changed Index: ", "bottomIndex", "pants", Random.Range(0, buttonLinks[8].icons.Length));
-        UpdateType(9, "Shoes Tint Changed Index: ", "bottomIndex", "shoes", Random.Range(1, buttonLinks[9].icons.Length));
+        UpdateType(0, "Hair Type Changed Index: ", "hair", Random.Range(0, buttonLinks[0].icons.Length));
+        UpdateType(1,"Eye Brow Tint Changed Index: ", "eyeBrow", Random.Range(0, buttonLinks[1].icons.Length));
+        UpdateType(2, "Eye Tint Changed Index: ", "eye", Random.Range(1, buttonLinks[2].icons.Length));
+        UpdateType(3, "Skin Tint Changed Index: ", "nose", Random.Range(0, buttonLinks[3].icons.Length));
+        UpdateType(4, "Mouth Tint Changed Index: ", "mouth", Random.Range(1, buttonLinks[4].icons.Length));
+        UpdateType(5, "Shirt Tint Changed Index: ", "shirt", Random.Range(1, buttonLinks[5].icons.Length));
+        UpdateType(6, "Sleeve Tint Changed Index: ", "sleeve", Random.Range(0, buttonLinks[6].icons.Length));
+        UpdateType(7, "Belt Tint Changed Index: ", "belt", Random.Range(1, buttonLinks[7].icons.Length));
+        UpdateType(8, "Pants Tint Changed Index: ", "pants", Random.Range(0, buttonLinks[8].icons.Length));
+        UpdateType(9, "Shoes Tint Changed Index: ", "shoes", Random.Range(1, buttonLinks[9].icons.Length));
         
-        UpdateColor(0, "Hair Color Changed Index: ", "faceIndex", "hair", Random.Range(0, buttonLinks[0].spriteData.Length));
-        UpdateColor(1,"Eye Brow Color Changed Index: ", "faceIndex", "eyeBrow", Random.Range(0, buttonLinks[1].spriteData.Length));
-        UpdateColor(2,"Eye Color Changed Index: ", "faceIndex", "eye", Random.Range(0, buttonLinks[2].spriteData.Length));
-        UpdateColor(3, "Skin Color Changed Index: ", "faceIndex", "nose", Random.Range(0, buttonLinks[3].spriteData.Length));
-        UpdateColor(4, "Mouth Color Changed Index: ", "faceIndex", "mouth", Random.Range(0, buttonLinks[4].spriteData.Length));
-        UpdateColor(5, "Shirt Color Changed Index: ", "bodyIndex", "shirt", Random.Range(0, buttonLinks[5].spriteData.Length));
-        UpdateColor(6, "Sleeve Color Changed Index: ", "bodyIndex", "sleeve", Random.Range(0, buttonLinks[6].spriteData.Length));
-        UpdateColor(7, "Belt Color Changed Index: ", "bottomIndex", "belt", Random.Range(0, buttonLinks[7].spriteData.Length));
-        UpdateColor(8, "Pants Color Changed Index: ", "bottomIndex", "pants", Random.Range(0, buttonLinks[8].spriteData.Length));
-        UpdateColor(9, "Shoes Color Changed Index: ", "bottomIndex", "shoes", Random.Range(0, buttonLinks[9].spriteData.Length));
+        UpdateColor(0, "Hair Color Changed Index: ", "hair", Random.Range(0, buttonLinks[0].spriteData.Length));
+        UpdateColor(1,"Eye Brow Color Changed Index: ", "eyeBrow", Random.Range(0, buttonLinks[1].spriteData.Length));
+        UpdateColor(2,"Eye Color Changed Index: ", "eye", Random.Range(0, buttonLinks[2].spriteData.Length));
+        UpdateColor(3, "Skin Color Changed Index: ", "nose", Random.Range(0, buttonLinks[3].spriteData.Length));
+        UpdateColor(4, "Mouth Color Changed Index: ", "mouth", Random.Range(0, buttonLinks[4].spriteData.Length));
+        UpdateColor(5, "Shirt Color Changed Index: ", "shirt", Random.Range(0, buttonLinks[5].spriteData.Length));
+        UpdateColor(6, "Sleeve Color Changed Index: ", "sleeve", Random.Range(0, buttonLinks[6].spriteData.Length));
+        UpdateColor(7, "Belt Color Changed Index: ", "belt", Random.Range(0, buttonLinks[7].spriteData.Length));
+        UpdateColor(8, "Pants Color Changed Index: ", "pants", Random.Range(0, buttonLinks[8].spriteData.Length));
+        UpdateColor(9, "Shoes Color Changed Index: ", "shoes", Random.Range(0, buttonLinks[9].spriteData.Length));
         
     }
     
@@ -185,7 +179,7 @@ public class Controls : MonoBehaviour
     }
     
     
-    public void UpdateColor(int parentIndex, string logMessage, string subTabName, string indexName, int i)
+    public void UpdateColor(int parentIndex, string logMessage, string indexName, int i)
     {
         Debug.Log(logMessage + i);
         FaceBigTabKeys[indexName + "ColorIndex"]  = i;
@@ -262,7 +256,7 @@ public class Controls : MonoBehaviour
         bodyPart[7].sprite = legData[0].spriteData[FaceBigTabKeys["noseColorIndex"]];
     }
     
-    public void UpdateType(int parentIndex, string logMessage, string subTabName, string indexName, int i)
+    public void UpdateType(int parentIndex, string logMessage, string indexName, int i)
     {
         Debug.Log(logMessage + i);
         FaceBigTabKeys[indexName + "TypeIndex"] = i;
